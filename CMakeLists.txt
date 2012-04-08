@@ -1,4 +1,5 @@
 cmake_minimum_required (VERSION 2.6)
+project(CodeDB)
 
 option(USE_RE2 "Use Google's re2 regular expression library." ON)
 
@@ -41,3 +42,21 @@ include_directories("ext/snappy")
 
 add_executable(cdb ${SOURCES} ${SNAPPY_SRC})
 target_link_libraries(cdb ${LIBS})
+
+## Packaging
+install(TARGETS cdb RUNTIME DESTINATION bin)
+
+set(CPACK_PACKAGE_EXECUTABLES cdb)
+
+if(WIN32)
+  # TODO: date
+  set(CPACK_PACKAGE_VERSION "20120408")
+  set(CPACK_GENERATOR zip)
+else()
+  execute_process(COMMAND date +%Y%m%d
+                  OUTPUT_VARIABLE CPACK_PACKAGE_VERSION
+                  OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  set(CPACK_GENERATOR TBZ2)
+endif()
+include(CPack)
